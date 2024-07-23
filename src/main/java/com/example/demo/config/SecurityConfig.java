@@ -24,6 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
+    private  final UserDetailsServiceImpl userDetailsService;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -35,7 +36,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.cors(AbstractHttpConfigurer::disable)
+        return httpSecurity
+                .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeRequests(authorize -> authorize
                         .requestMatchers("/api/auth/**").permitAll()
@@ -50,6 +52,7 @@ public class SecurityConfig {
                                 "/webjars/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .userDetailsService(userDetailsService)
                 .build();
     }
 
